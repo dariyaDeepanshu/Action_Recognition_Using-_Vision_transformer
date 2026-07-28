@@ -1,0 +1,84 @@
+# =============================================================================
+# BASE TRAINING CONFIGURATION
+# =============================================================================
+# This file contains the shared hyperparameters for training all video
+# classification models (TimeSFormer, VideoMAE). Model‑specific
+# overrides are placed in separate YAML files (e.g., timesformer.yaml).
+# =============================================================================
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TRAINING HYPERPARAMETERS
+# ─────────────────────────────────────────────────────────────────────────────
+training:
+  # Total number of training epochs.
+  epochs: 20
+
+  # Early stopping patience: number of consecutive epochs without improvement
+  # on the validation set before training stops.
+  patience: 5
+
+  # Number of video clips per batch. This value is used unless overridden
+  # by a model‑specific YAML (e.g., videomae.yaml may set a smaller batch size).
+  batch_size: 8
+
+  # Initial learning rate for the AdamW optimizer.
+  lr: 1e-4
+
+  # Weight decay (L2 regularisation) to prevent overfitting.
+  weight_decay: 0.01
+
+  # Learning rate scheduler type. Options:
+  #   "cosine"         – Cosine annealing (default)
+  #   "step"           – Step decay (requires step_size and gamma)
+  #   "warmup_cosine"  – Linear warmup followed by cosine annealing
+  lr_scheduler: cosine
+
+  # Number of warmup epochs (only used if lr_scheduler == "warmup_cosine").
+  # During warmup, the learning rate increases linearly from 1e-6 to the base LR.
+  warmup_epochs: 2
+
+  # Device to run training on. The trainer will fall back to CPU if CUDA
+  # is not available, regardless of this setting.
+  device: "cuda"
+
+  # Random seed for reproducibility of splits, weight initialisation,
+  # and data augmentation (where applicable).
+  seed: 42
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DATA LOADING CONFIGURATION
+# ─────────────────────────────────────────────────────────────────────────────
+data:
+  # Number of subprocesses to use for data loading. Higher values may speed
+  # up I/O but increase memory usage.
+  num_workers: 2
+
+  # If True, uses pinned memory for faster GPU transfers (only matters when
+  # using a GPU).
+  pin_memory: true
+
+  # Path to the HMDB_simp dataset root (relative to the project root).
+  # The dataset is expected to have subfolders for each action class,
+  # each containing video folders with JPG frames.
+  dataset_root: "HMDB_simp"
+
+  # Frame sampling strategy used by HMDBDataset. Options:
+  #   "uniform" – evenly spaced frames across the whole video (default).
+  #   "random"  – random selection of frames (for ablation studies).
+  #   "dense"   – consecutive frames from the middle of the video.
+  sampling: "uniform"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LOGGING AND CHECKPOINT CONFIGURATION
+# ─────────────────────────────────────────────────────────────────────────────
+logging:
+  # Directory where TensorBoard logs (event files) are stored. A subdirectory
+  # named after the model (e.g., "timesformer") will be created inside.
+  log_dir: "logs"
+
+  # Directory where model checkpoints (best.pt files) are saved.
+  checkpoint_dir: "checkpoints"
+
+  # If True, the trainer saves only the best model (lowest validation loss)
+  # instead of keeping checkpoints for every epoch. This saves disk space.
+  save_best_only: true

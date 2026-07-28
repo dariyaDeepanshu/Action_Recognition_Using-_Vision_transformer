@@ -1,0 +1,34 @@
+# =============================================================================
+# TIMESFORMER MODEL CONFIGURATION
+# =============================================================================
+# This file overrides the base configuration (base.yaml) for the TimeSFormer
+# model. All parameters not explicitly listed here are inherited from base.yaml.
+# =============================================================================
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MODEL IDENTIFIER AND PRE‑TRAINED CHECKPOINT
+# ─────────────────────────────────────────────────────────────────────────────
+model_name: timesformer
+pretrained_checkpoint: "facebook/timesformer-base-finetuned-k400"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MODEL-SPECIFIC PREPROCESSING
+# ─────────────────────────────────────────────────────────────────────────────
+# Number of frames per clip (default for TimeSFormer).
+num_frames: 8
+
+# Spatial resolution (height and width) of each frame.
+image_size: 224
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TRAINING HYPERPARAMETER OVERRIDES
+# ─────────────────────────────────────────────────────────────────────────────
+training:
+  # Batch size (videos per batch). 8 is safe for a 24 GB GPU.
+  batch_size: 8
+
+  # Initial learning rate (1e-4 is typical for fine‑tuning TimeSFormer).
+  lr: 1e-4
+
+# All other parameters (epochs, patience, weight_decay, lr_scheduler, etc.)
+# are taken from base.yaml.

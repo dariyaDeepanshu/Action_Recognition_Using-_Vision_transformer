@@ -1,0 +1,35 @@
+# =============================================================================
+# VIDEOMAE MODEL CONFIGURATION
+# =============================================================================
+# This file overrides the base configuration (base.yaml) for the VideoMAE
+# model. VideoMAE uses 16 frames per clip and a smaller batch size (12) to
+# fit in GPU memory.
+# =============================================================================
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MODEL IDENTIFIER AND PRE‑TRAINED CHECKPOINT
+# ─────────────────────────────────────────────────────────────────────────────
+model_name: videomae
+pretrained_checkpoint: "MCG-NJU/videomae-base-finetuned-kinetics"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MODEL-SPECIFIC PREPROCESSING
+# ─────────────────────────────────────────────────────────────────────────────
+# VideoMAE uses 16 frames (default) to capture more temporal context.
+num_frames: 16
+
+# Spatial resolution remains 224×224.
+image_size: 224
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TRAINING HYPERPARAMETER OVERRIDES
+# ─────────────────────────────────────────────────────────────────────────────
+training:
+  # Batch size is reduced to 12 (from base’s 8) because VideoMAE has 16 frames,
+  # which consumes more memory. Adjust according to your GPU capacity.
+  batch_size: 12
+
+  # Learning rate 1e-4 works well for fine‑tuning VideoMAE.
+  lr: 1e-4
+
+# All other parameters are inherited from base.yaml.
