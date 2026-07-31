@@ -1,0 +1,36 @@
+{
+  "baseline": {
+    "top1": 90.43,
+    "top5": 98.4
+  },
+  "sampling": {
+    "random": {
+      "top1": 90.43,
+      "top5": 97.87
+    },
+    "dense": {
+      "top1": 88.3,
+      "top5": 96.81
+    }
+  },
+  "augmentation": {
+    "spatial": {
+      "top1": 92.02,
+      "top5": 98.4
+    },
+    "temporal": {
+      "top1": 88.3,
+      "top5": 97.87
+    }
+  },
+  "scheduler": {
+    "step": {
+      "top1": 86.7,
+      "top5": 98.94
+    },
+    "warmup_cosine": {
+      "top1": 91.49,
+      "top5": 99.47
+    }
+  }
+}
