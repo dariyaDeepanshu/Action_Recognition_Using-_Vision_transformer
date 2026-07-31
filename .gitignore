@@ -1,0 +1,47 @@
+# Virtual environment (ignore entire directory, not just contents)
+.venv/
+venv/
+env/
+
+# Large dataset directories
+HMDB_simp/
+JHMDB_simp/
+
+# Model checkpoints and saved final models
+checkpoints/
+final_model/
+*.pt
+*.pth
+*.bin
+
+# Logs (training logs, not just TensorBoard)
+logs/
+runs/
+*.log
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# OS metadata files
+.DS_Store
+Thumbs.db
+
+# IDE settings (optional, but good to have)
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+
+# Compiled / distribution files
+*.egg-info/
+dist/
+build/
