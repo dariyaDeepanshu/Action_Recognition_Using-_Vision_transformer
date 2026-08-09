@@ -18,7 +18,7 @@ Video action **classification** (VideoMAE, TimeSFormer) and spatio‑temporal ac
   - [Part D — Spatio-temporal action localisation](#part-d--spatio-temporal-action-localisation-detr-style-jhmdb)
   - [Part E — Interpretability](#part-e--interpretability--error-analysis)
 - [Reproducibility notes](#reproducibility-notes)
-- [Known gaps / not yet reported](#known-gaps--not-yet-reported)
+
 
 ## Overview
 
@@ -179,6 +179,4 @@ These are qualitative visualisations rather than scalar metrics; no numeric inte
 - Training was run on a single CUDA GPU (`otter156.eps.surrey.ac.uk`, per TensorBoard/host metadata in the log filenames).
 - GFLOPs and parameter counts are measured with `thop` inside `evaluation/metrics.py` at evaluation time, for a single clip of the model's native input size (VideoMAE: 16×224×224).
 
-## Known gaps / not yet reported
 
-- The `task1_action_classification/` and `task2_action_localization/` scaffold directories referenced by earlier commits are currently empty/absent in this working copy; all functional code actually lives in the top-level `models/`, `training/`, `data/`, `evaluation/`, and `scripts/` directories documented above.
