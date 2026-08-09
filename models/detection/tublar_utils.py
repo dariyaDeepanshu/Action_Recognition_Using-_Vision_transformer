@@ -154,7 +154,7 @@ def link_detections_to_tubes(
                 # Extend the tube
                 tube['frames'].append(t)
                 tube['boxes'].append(frame_dets['boxes'][best_idx])
-                tube['scores'].append(frame_detections['scores'][best_idx])
+                tube['scores'].append(frame_dets['scores'][best_idx])
                 matched[best_idx] = True
 
         # All detections that were not matched become new tubes
