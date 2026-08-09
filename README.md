@@ -53,7 +53,7 @@ JHMDB_simp/          Localisation dataset (git-ignored; not included in the repo
 
 Classes: `brush_hair, cartwheel, catch, chew, climb, climb_stairs, draw_sword, eat, fencing, flic_flac, golf, handstand, kiss, pick, pour, pullup, pushup, ride_bike, shoot_bow, shoot_gun, situp, smile, smoke, throw, wave`
 
-**JHMDB_simp** — used for Task 2 (localisation) and for the cross-dataset interpretability analysis in Part E. 21 classes, 929 video clips, with per-frame bounding boxes derived from joint-position annotations (`.mat` files) and the official train/test splits shipped with JHMDB.
+**JHMDB_simp** — used for Task 2 (localisation) and for the cross-dataset interpretability analysis in Part E. 21 classes, 928 video clips, with per-frame bounding boxes derived from joint-position annotations (`.mat` files) and the official train/test splits shipped with JHMDB.
 
 Classes: `brush_hair, catch, clap, climb_stairs, golf, jump, kick_ball, pick, pour, pullup, push, run, shoot_ball, shoot_bow, shoot_gun, sit, stand, swing_baseball, throw, walk, wave`
 
@@ -105,14 +105,14 @@ All numbers below are read directly from the JSON/log artifacts committed under 
 
 ### Part A — Backbone comparison (video classification)
 
-| Model | Split | Top-1 | Top-5 | Params | GFLOPs/clip |
-|---|---|---|---|---|---|
-| **VideoMAE** (16 frames, uniform sampling, no augmentation) | Test (188 videos) | **90.43%** | 98.40% | 86.26M | 135.14 |
-| TimeSFormer (8 frames, uniform sampling, no augmentation) | Validation (187 videos)† | 87.17% | — | — | — |
+| Model | Split | Top-1 | Top-5 | Macro-F1 | Params | GFLOPs/clip |
+|---|---|---|---|---|---|---|
+| **VideoMAE** (16 frames, uniform sampling, no augmentation) | Test (188 videos) | **90.43%** | 98.40% | 90.30% | 86.26M | 135.14 |
+| TimeSFormer (8 frames, uniform sampling, no augmentation) | Test (188 videos) | 84.57% | 97.34% | 84.33% | 121.28M | 190.06 |
 
-† TimeSFormer's best checkpoint (`checkpoints/timesformer_best.pt`) was selected on validation accuracy (from TensorBoard logs, `logs/timesformer/`); training accuracy reached 100% within a few epochs (fast overfitting on 875 training clips). No `evaluate_classifier.py` run against the held-out **test** split, per-class breakdown, parameter count, or GFLOPs figure for TimeSFormer is currently saved under `outputs/` — see [Known gaps](#known-gaps--not-yet-reported).
+VideoMAE outperforms TimeSFormer by 5.86 pp Top-1 on the same test split, while also being the smaller and cheaper model (86.3M vs 121.3M params, 135.1 vs 190.1 GFLOPs/clip). TimeSFormer's best checkpoint (`checkpoints/timesformer_best.pt`) was selected on validation accuracy (from TensorBoard logs, `logs/timesformer/`); training accuracy reached 100% within a few epochs (fast overfitting on 875 training clips), consistent with it underperforming VideoMAE on the held-out test set.
 
-VideoMAE baseline macro-F1: 90.30%, weighted-F1: 90.47% (`outputs/evaluate_classifier/videomae_baseline_20260728_201611/metrics.json`). Full per-class precision/recall/F1 and confusion matrices are available in that directory for every configuration listed below.
+Source: `outputs/evaluate_classifier/videomae_baseline_20260728_201611/metrics.json` (VideoMAE) and `outputs/evaluate_classifier/timesformer_20260731_230344/metrics.json` (TimeSFormer). Full per-class precision/recall/F1 and confusion matrices are available in those directories, and for every VideoMAE configuration listed below.
 
 ### Part B — Ablation study (VideoMAE)
 
@@ -152,7 +152,16 @@ The localisation head (`models/detection/detr_head.py`) was trained on JHMDB_sim
 | Final train loss (epoch 30) | 0.34 |
 | Final val loss (epoch 30) | 1.88 |
 
-**No frame-mAP / video-mAP has been computed for this checkpoint in this repository.** `evaluation/localisation_metrics.py` implements 11-point-interpolated frame-AP, spatio-temporal IoU, and video-AP/mAP at IoU 0.5, and `scripts/evaluate_localisation.py` is ready to run against `checkpoints/detr_best.pt`, but no run of that script has produced an output file under `outputs/` yet. Do not treat the loss values above as a proxy for detection accuracy — they are reported only as evidence the model trained without diverging. See [Known gaps](#known-gaps--not-yet-reported).
+`evaluation/localisation_metrics.py` implements 11-point-interpolated frame-AP, spatio-temporal IoU, and video-AP/mAP at IoU 0.5. `scripts/evaluate_localisation.py` was run against `checkpoints/detr_best.pt` at both the standard and a lowered confidence threshold:
+
+| Detection setting | Frame-mAP@0.5 | Video-mAP@0.5 |
+|---|---|---|
+| Standard confidence threshold | 0.000 | 0.000 |
+| Lowered confidence threshold | 0.010 | 0.069 |
+
+(Source: `outputs/evaluate_localisation/detr_20260731_230354/localisation_metrics.json` and `outputs/evaluate_localisation/detr_lowthresh_20260731_230518/localisation_metrics.json`.)
+
+At the standard threshold the model produces no confident detections at all — the classification branch assigns nearly every query to the background class, so no detection survives thresholding. Lowering the threshold recovers a small number of usable boxes; the only classes with non-zero frame-AP are `pullup` (0.119) and `swing_baseball` (0.091), both strongly periodic actions with a spatially stable, centred actor. This is a clear negative result: the head converges in training but fails to generalise, most likely due to extreme query/background class imbalance (10 queries, 1 ground-truth tube per clip), frozen classification-tuned backbone features, and a training schedule (30 epochs) far shorter than DETR-style set prediction typically needs. Do not treat the loss values above as a proxy for detection accuracy on their own — they are corroborating evidence the model trained without diverging, not a substitute for the mAP figures above.
 
 ### Part E — Interpretability & error analysis
 
@@ -172,6 +181,4 @@ These are qualitative visualisations rather than scalar metrics; no numeric inte
 
 ## Known gaps / not yet reported
 
-- **TimeSFormer** has no saved test-set evaluation (`outputs/evaluate_classifier/` only contains VideoMAE runs). Run `scripts/evaluate_classifier.py --model_name timesformer --checkpoint checkpoints/timesformer_best.pt --config configs/timesformer.yaml` to generate one.
-- **DETR localisation** has no saved quantitative frame-mAP / video-mAP results. Run `scripts/evaluate_localisation.py --checkpoint checkpoints/detr_best.pt` to generate one.
 - The `task1_action_classification/` and `task2_action_localization/` scaffold directories referenced by earlier commits are currently empty/absent in this working copy; all functional code actually lives in the top-level `models/`, `training/`, `data/`, `evaluation/`, and `scripts/` directories documented above.
