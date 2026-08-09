@@ -1,0 +1,72 @@
+{
+  "checkpoint": "checkpoints/detr_best.pt",
+  "frame_map_at_05": 0.01,
+  "video_map_at_05": 0.0693,
+  "per_class_frame_ap": {
+    "brush_hair": 0.0,
+    "catch": 0.0,
+    "clap": 0.0,
+    "climb_stairs": 0.0,
+    "golf": 0.0,
+    "jump": 0.0,
+    "kick_ball": 0.0,
+    "pick": 0.0,
+    "pour": 0.0,
+    "pullup": 0.1192,
+    "push": 0.0,
+    "run": 0.0,
+    "shoot_ball": 0.0,
+    "shoot_bow": 0.0,
+    "shoot_gun": 0.0,
+    "sit": 0.0,
+    "stand": 0.0,
+    "swing_baseball": 0.0909,
+    "throw": 0.0,
+    "walk": 0.0,
+    "wave": 0.0
+  },
+  "top5_classes": [
+    {
+      "class": "pullup",
+      "ap": 0.1192
+    },
+    {
+      "class": "swing_baseball",
+      "ap": 0.0909
+    },
+    {
+      "class": "brush_hair",
+      "ap": 0.0
+    },
+    {
+      "class": "catch",
+      "ap": 0.0
+    },
+    {
+      "class": "clap",
+      "ap": 0.0
+    }
+  ],
+  "bottom5_classes": [
+    {
+      "class": "sit",
+      "ap": 0.0
+    },
+    {
+      "class": "stand",
+      "ap": 0.0
+    },
+    {
+      "class": "throw",
+      "ap": 0.0
+    },
+    {
+      "class": "walk",
+      "ap": 0.0
+    },
+    {
+      "class": "wave",
+      "ap": 0.0
+    }
+  ]
+}
